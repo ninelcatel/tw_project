@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <title>Ninelgammon</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <nav class="menu-bar">
+        <ul>
+            <a href="index.html"><img src="images/1.png" alt="home">
+            Home
+            </a>
+            <a href="h2p.html"><img src="images/3.png" alt="how to play">
+            How to Play
+            </a>
+            <a href="play.html"><img src="images/2.png" alt="play">
+            Play!
+            </a>
+            <a href="about.html"><img src="images/4.png" alt="about">
+            About
+            </a>
+        </ul>
+    </nav>
+    <div class="content">
+        <h1>History of Ninelgammon</h1>
+        <h2>The first Ninelgammon project</h2>
+        <p>The first Ninelgammon project was also my FIRST project,if you do consider it being one.</p>
+        <p>It was a very fun but not so learning experience since i used everything i learnt in school until 11th grade, it was and still is pretty buggy since i didnt even know how to use the debugger back then, but it worked sometimes :P</p>
+        <p>The main logic behind it was using a matrix as a board and playing the game was via inputted numbers in console </p>
+        <p>Here are some examples on how it looked:</p>
+        <div class="slider">
+            <input type="radio" name="slider1" id="slide1-1" checked>
+            <input type="radio" name="slider1" id="slide1-2">
+
+            <div class="slides">
+                <div class="slide">
+                    <img src="images/p1.png" alt="picture1">
+                </div>
+                <div class="slide">
+                    <img src="images/p2.png" alt="picture2">
+                </div>
+            </div>
+
+            <div class="nav">
+                <label for="slide1-1"></label>
+                <label for="slide1-2"></label>
+            </div>
+        </div>
+        <p>It wasn't really good but it did motivate me to take this journey further to:</p>
+        <h2>The 2nd Ninelgammon project</h2>
+        <p>As i got to 12th grade i was told by my teachers that it would be good to make a project to get a bonus diploma after finishing high school, i saw this as an opportunity and decided to upgrade the game shown before</p>
+        <p>I started researching some graphics rendering libraries in C and had chosen SDL2 and its external libraries such as SDL2 images, fonts, etc.</p>
+        <p>It was hard at first, since had to somehow export those characters that resemble a board into actual interface, make menus and so on, but i managed and it looks like this:</p>
+        <div class="slider">
+            <input type="radio" name="slider2" id="slide2-1" checked>
+            <input type="radio" name="slider2" id="slide2-2">
+            <input type="radio" name="slider2" id="slide2-3">
+            <input type="radio" name="slider2" id="slide2-4">
+            <input type="radio" name="slider2" id="slide2-5">
+            <div class="slides">
+                <div class="slide">
+                    <img src="images/pp1.png" alt="picture1">
+                </div>
+                <div class="slide">
+                    <img src="images/pp2.png" alt="picture2">
+                </div>
+                <div class="slide">
+                    <img src="images/pp3.png" alt="picture3">
+                </div>
+                <div class="slide">
+                    <img src="images/pp4.png" alt="picture4">
+                </div>
+                <div class="slide">
+                    <img src="images/pp5.png" alt="picture5">
+                </div>
+
+            </div>
+
+            <div class="nav">
+                <label for="slide2-1"></label>
+                <label for="slide2-2"></label>
+                <label for="slide2-3"></label>
+                <label for="slide2-4"></label>
+                <label for="slide2-5"></label>
+            </div>
+        </div>        
+        <p>I spent a lot of time trying to optimise it but ran into a lot of compatibility problems since not EVERYONE has mingw installed so it lead to:</p>
+        <h2>The third Ninelgammon project</h2>
+        <p>Theres not much to say here, since it is still WIP, but this whole website is the current progress made, the game will eventually be coded using Javascript.</p>
+    </div>
+</body>
+
+</html>
