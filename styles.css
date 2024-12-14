@@ -4,7 +4,8 @@ body
     padding: 0;
     align-items: center;
     background-image: url("images/wallpaper.png");
-    background-size: cover;
+   background-color: black; 
+   background-size: cover;
 
     display: flex; 
     text-shadow: 
@@ -32,14 +33,12 @@ body
 }
 .menu-bar ul {
     
-    border: 3px solid #2b1500;
     border-radius: 25px;  
     list-style: none;
     display: flex;
     flex-direction: column;
     margin: 0;
     padding: 0;
-    backdrop-filter: blur(1.5px);
 }
 
 .menu-bar ul a {
@@ -61,22 +60,23 @@ body
 .menu-bar ul a img:hover{
     transform: scale(1.05);
 }
-.content{
-    margin-top: 5%;
-    width: 50%;
-    display: flex;
-    margin-left: auto;
-    margin-right: auto;
-    padding: 20px;
-    backdrop-filter: blur(1.5px);
-    border: 3px solid #2b1500;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    flex-direction: column;
-    border-radius: 25px;
-}
+    .content{
+        margin-top: 5%;
+        position: relative;
+        width: 50%;
+        display: flex;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 20px;
+        backdrop-filter: blur(2px);
+        border: 3px solid #ffffffb4;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        flex-direction: column;
+        border-radius: 25px;
+    }
 .content p{
     font-size: 18px;
 
