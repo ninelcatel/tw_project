@@ -1,4 +1,5 @@
 //board rendering
+// box shadowu futut dupa ce faci miscari la bar, fa-l sa se updateze.
 var result1;
 var result2;
 var turn = 0;
@@ -158,10 +159,22 @@ window.onload = () => {
         destCol = col - die < 13 ? 13 + die - col : col - die;
       else destCol = col + die;
     }
+    const destIndex = positions.findIndex((p) => p.col === destCol);
+    if (destIndex !== -1) {
+      const opponentColor = color === 'white' ? 'black' : 'white';
+      if (positions[destIndex].color === opponentColor && positions[destIndex].nr >= 2) {
+        alert("Cannot move, opponent's pieces block the destination.");
+        renderBoard();
+        return 1;
+      }
+    }
+
+    // Decrement piece count only after confirming the move is valid
     positions[index].nr -= 1;
     if (positions[index].nr === 0) positions.splice(index, 1);
     }
     const destIndex = positions.findIndex((p) => p.col === destCol);
+    
     if (destIndex === -1) {
         positions.push({ nr: 1, color: color, col: destCol });
         if(bar[indexColorBar])
@@ -329,6 +342,14 @@ window.onload = () => {
       if(!movePiece(color,parseInt(dices[i]),col)){
       renderBoard()
       ++i;
+      if(document.getElementById("die1").style.boxShadow=="" && i==1){
+        document.getElementById("die2").style.boxShadow=""
+        document.getElementById("die1").style.boxShadow="0 0 20px 5px aqua"
+      }
+      else if(i==1){
+        document.getElementById("die1").style.boxShadow=""
+        document.getElementById("die2").style.boxShadow="0 0 20px 5px aqua"
+      }
       if(i==2){
         diceRolled = false;
         document.getElementById("die1").style.boxShadow=""
