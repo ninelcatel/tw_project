@@ -4,34 +4,35 @@ var result1;
 var result2;
 var turn = 0;
 var invalid=0;
-bar=[0,0];
-const gameState = Object.freeze({
-  GAME: "GAME",
-  MENU: "MENU",
-  RESTART: "RESTART",
-});
-var gamePhase = gameState.GAME;
+var bar=[0,0];
+
 window.onload = () => {
   const board = document.getElementById("board");
   const ctx = board.getContext("2d");
   const boardW = board.width;
   const boardH = board.height;
-
+  const gameState = Object.freeze({
+    GAME: "GAME",
+    MENU: "MENU",
+    RESTART: "RESTART",
+  });
+  let gamePhase = gameState.MENU;
   const barW = boardW / 15;
   const triangleW = boardW / 13;
   const triangleH = boardH / 2;
   const triangleColors = ["#d2691e", "#ffffff"];
   var positions = [
-    { nr: 6, color: "white", col: 19 },
-    { nr: 3, color: "white", col: 17 },
-    { nr: 6, color: "white", col: 1 },
+    { nr: 5, color: "white", col: 19 },
+    { nr: 5, color: "white", col: 1 },
     { nr: 2, color: "white", col: 12 },
-    { nr: 6, color: "black", col: 7 },
-    { nr: 3, color: "black", col: 5 },
-    { nr: 6, color: "black", col: 13 },
+    { nr: 3, color: "white", col: 17 },
+    { nr: 5, color: "black", col: 7 },
+    { nr: 5, color: "black", col: 13 },
     { nr: 2, color: "black", col: 24 },
-  ];
+    { nr: 3, color: "black", col: 5 },
 
+  ];
+  
   function renderBoard() {
     ctx.clearRect(0, 0, boardW, boardH);
     ctx.fillStyle = "#f0d9b5";
@@ -138,10 +139,66 @@ window.onload = () => {
     return col + 1;
   }
   function movePiece(color, die, col) {
-    
     let destCol = 0;
     let indexColorBar= color==='white' ? 1 : 0 ;
     if(bar[indexColorBar]) destCol= color==='white' ? 12-die+1 : 24-die+1
+    else if(checkHome(color,positions)){
+      const index = positions.findIndex(
+        (p) => p.color === color && p.col === col
+      );
+      if (index === -1) {
+        alert("no piece found on pointer:", col);
+        return 1;
+      }
+      if(color==='white'){
+          if(die>25-col && positions.findIndex((p) => (p.col<col && p.col>18 && p.color==='white'))!=-1){
+            alert("Exista o coloana prioritara in stanga")
+            return 1;
+          }
+          if(die+col>=25){
+            const index = positions.findIndex(
+              (p) => p.color === color && p.col === col
+            );
+            positions[index].nr--;
+            if (positions[index].nr === 0) positions.splice(index, 1);
+            return 0;
+          }
+          else {
+            destCol=col+die;
+            if(positions[index]){
+              if(positions.findIndex((p) => (p.col===destCol && p.nr>=2 && p.color==='black'))!=-1)
+                return 1;
+            }
+            if(destCol===0) return;
+            positions[index].nr--;
+            if (positions[index].nr === 0) positions.splice(index, 1);          }      
+      }
+      else{
+        if(die>13-col && positions.findIndex((p) => (p.col<col && p.col>6 && p.nr>0 && p.color==='black'))!=-1){
+          alert("Exista o coloana prioritara in stanga")
+          return 1;
+        }
+        if(die+col>=13){
+          const index = positions.findIndex(
+            (p) => p.color === color && p.col === col
+          );
+          positions[index].nr--;
+          if (positions[index].nr === 0) positions.splice(index, 1);
+          return 0;
+        }
+        else {
+          destCol=col+die;
+          if(positions[index]){
+            if(positions.findIndex((p) => (p.col===destCol && p.nr>=2 && p.color==='white'))!=-1)
+              return 1;
+          }
+          if(destCol===0) return; 
+          positions[index].nr--;
+          if (positions[index].nr === 0) positions.splice(index, 1);
+    
+      }   
+      }
+    }
     else {
         const index = positions.findIndex(
             (p) => p.color === color && p.col === col
@@ -153,12 +210,16 @@ window.onload = () => {
         if (color === "white") {
       if (col > 0 && col < 13) {
         destCol = col <= die ? 13 - col + die : col - die;
-      } else destCol = col + die;
+      } else if(col+die<=24) destCol = col + die;
     } else { //black
       if (col > 12 && col < 25)
         destCol = col - die < 13 ? 13 + die - col : col - die;
-      else destCol = col + die;
+      else if(col>0 && col<13 && col+die<=12) {
+        destCol = col + die;
+
+      }
     }
+    if(destCol===0) return 1;
     const destIndex = positions.findIndex((p) => p.col === destCol);
     if (destIndex !== -1) {
       const opponentColor = color === 'white' ? 'black' : 'white';
@@ -169,13 +230,12 @@ window.onload = () => {
       }
     }
 
-    // Decrement piece count only after confirming the move is valid
     positions[index].nr -= 1;
     if (positions[index].nr === 0) positions.splice(index, 1);
     }
+   
     const destIndex = positions.findIndex((p) => p.col === destCol);
-    
-    if (destIndex === -1) {
+      if (destIndex === -1) {
         positions.push({ nr: 1, color: color, col: destCol });
         if(bar[indexColorBar])
             bar[indexColorBar]--;
@@ -201,11 +261,11 @@ window.onload = () => {
         if(bar[indexColorBar]){
             invalid++;
         }
-        if (invalid===2) return 0;
         return 1;
       }
     }
     invalid=0;
+
     renderBoard();
     return 0;
   }
@@ -282,50 +342,81 @@ window.onload = () => {
       die2.classList.remove("roll");
     }, 500);
   }
-  if (gamePhase === gameState.GAME) {
+  function startGame() {
+    const playerForm = document.getElementById("playerForm");
+    const container = document.getElementById("game");
+    const startGameButton = document.getElementById("startGame");
+
+    startGameButton.addEventListener("click", () => {
+      const player1 = document.getElementById("player1").value.trim();
+      const player2 = document.getElementById("player2").value.trim();
+
+      if (player1 && player2) {
+        console.log("Player 1:", player1);
+        console.log("Player 2:", player2);
+
+        // Transition from the menu to the game phase
+        playerForm.classList.add("fade-out");
+
+        setTimeout(() => {
+          playerForm.style.display = "none";
+          container.classList.add("fade-in");
+          container.style.display = "block";
+          gamePhase = gameState.GAME;
+          console.log("Game Phase Updated:", gamePhase);
+        }, 500);
+      } else {
+        alert("Please enter names for both players.");
+      }
+    });
+  }  
+  if(gamePhase===gameState.MENU) startGame()
+  else if (gamePhase === gameState.GAME) game()
+  function game(){
     renderBoard();
     let color;
-    let i=0;
     let dices=[]
+    let diceUsed=[false,false];
     let diceChoice=0;
     let diceRolled = false;
     document.getElementById("roll").addEventListener("click", () => {
       if(diceRolled) return;
       rollDice();
-      diceChoice=0;
+      diceChoice=-1;
       document.getElementById("die2").style.boxShadow=""
       document.getElementById("die1").style.boxShadow=""
       diceRolled = true;
       color = (turn++%2) ? 'black' : 'white';
+      dices=[document.getElementById("die1").dataset.value,document.getElementById("die2").dataset.value];
+
     });
     
     document.getElementById("die1").addEventListener("click",() =>{
-        if(!diceChoice)
+      if(diceUsed[0]===false){  
+      if(diceChoice==-1)
             document.getElementById("die1").style.boxShadow="0 0 20px 5px aqua" 
         else {
             document.getElementById("die2").style.boxShadow=""
             document.getElementById("die1").style.boxShadow="0 0 20px 5px aqua"
         }
-        diceChoice=1;
-        dices=[document.getElementById("die1").dataset.value,document.getElementById("die2").dataset.value];
+        diceChoice=0;}
     })
     document.getElementById("die2").addEventListener("click",() =>{
-        
-        if(!diceChoice)
+        if(diceUsed[1]===false){
+        if(diceChoice==-1)
             document.getElementById("die2").style.boxShadow="0 0 20px 5px aqua"
-        else {
+        else{
             document.getElementById("die1").style.boxShadow=""
             document.getElementById("die2").style.boxShadow="0 0 20px 5px aqua"
         }
-        diceChoice=2;
-        dices=[document.getElementById("die2").dataset.value,document.getElementById("die1").dataset.value];
+        diceChoice=1;}
     })
     board.addEventListener("click", (e) => {
       if (!diceRolled) {
         alert("Please roll the dice first");
         return;
       }
-      if(!diceChoice){
+      if(diceChoice==-1){
         alert("Please select the die first!");
         return;
       }
@@ -338,35 +429,65 @@ window.onload = () => {
       //let scaleY = canvasHeight / 1080;
       let scaledX = mouseX / scaleX;
       let col = getColumnFromClick(scaledX, mouseX, mouseY, rect);
-      console.log(dices[i])
-      if(!movePiece(color,parseInt(dices[i]),col)){
+
+      
+      if(checkValidMoves(color,parseInt(dices[diceChoice]),positions)){
+      
+      if(!movePiece(color,parseInt(dices[diceChoice]),col)){
+      if(checkWin(color,positions))gamePhase=gameState.RESTART;
       renderBoard()
-      ++i;
-      if(document.getElementById("die1").style.boxShadow=="" && i==1){
+      diceUsed[diceChoice]=true;
+      if(diceChoice===0) {
+        diceChoice=1;
+      }
+      else diceChoice=0;
+      if(diceChoice===0){
         document.getElementById("die2").style.boxShadow=""
         document.getElementById("die1").style.boxShadow="0 0 20px 5px aqua"
       }
-      else if(i==1){
+      else if(diceChoice===1){
         document.getElementById("die1").style.boxShadow=""
         document.getElementById("die2").style.boxShadow="0 0 20px 5px aqua"
       }
-      if(i==2){
+      if(diceUsed[0] && diceUsed[1]){
         diceRolled = false;
         document.getElementById("die1").style.boxShadow=""
         document.getElementById("die2").style.boxShadow=""
-        diceChoice=0;
+        diceChoice=-1;
         i=0;
+        diceUsed=[false,false]
         dices=[];
       }
     }
+    
+    }
     else{
-        if (invalid==2)
+        if((diceUsed[0]===false && diceUsed[1]===true) || (diceUsed[0]===true && diceUsed[1]===false) || (checkValidMoves(color,parseInt(dices[(diceChoice+1)%2]),positions)===false)){
             alert("nu exista mutari valide,trecem peste tura")
-        else 
-            alert("selecteaza alta combinatie")
+            diceRolled = false;
+        document.getElementById("die1").style.boxShadow=""
+        document.getElementById("die2").style.boxShadow=""
+        diceChoice=-1;
+        dices=[];
+        diceUsed=[false,false];
+        }
+        else{
+          if(diceChoice===0) {
+          diceChoice=1;
+          document.getElementById("die1").style.boxShadow=""
+        document.getElementById("die2").style.boxShadow="0 0 20px 5px aqua"
+        }
+        else {
+          diceChoice=0;
+          document.getElementById("die2").style.boxShadow=""
+          document.getElementById("die1").style.boxShadow="0 0 20px 5px aqua"
+  
+        }
+      }
     }
     });
-  }
+    }
+  
 };
 
 function drawTriangle(ctx, x, y, isUp, color, triangleH, triangleW) {
@@ -387,4 +508,59 @@ function drawPiece(ctx, x, y, color, triangleW) {
   if (color == "white") ctx.strokeStyle = "black";
   else if (color == "black") ctx.strokeStyle = "white";
   ctx.stroke();
+}
+function checkValidMoves(color, die, positions) {
+  const barIndex = color === 'white' ? 1 : 0;
+  const opponentColor = color === 'white' ? 'black' : 'white';
+  if (bar[barIndex] > 0) {
+    const targetCol = color === 'white' ? 13 - die : 25 - die;
+    const targetIndex = positions.findIndex((p) => p.col === targetCol);
+
+    if (
+      targetIndex === -1 || 
+      positions[targetIndex].color === color || 
+      (positions[targetIndex].color === opponentColor && positions[targetIndex].nr === 1) 
+    ) {
+      return true;
+    }
+    return false; 
+  }
+
+  for (const p of positions) {
+    if (p.color === color) {
+      const targetCol = color === 'white' ? p.col>12 ? p.col+die : p.col-die : p.col>12 ? p.col - die : p.col +die;
+      const targetIndex = positions.findIndex((s) => s.col === targetCol);
+
+      if (
+        targetIndex === -1 ||
+        positions[targetIndex].color === color ||
+        (positions[targetIndex].color === opponentColor && positions[targetIndex].nr === 1) 
+      ) {
+        return true; 
+      }
+    }
+  }
+
+  return false; // novalid moves
+}
+function checkHome(color,positions){
+  for (let p of positions){
+    if(p.color===color)
+    {
+      if(color==='white' && p.col<=18 && p.col>0) {
+        return false;
+        }
+      else if (color==='black' && (p.col<=6 || p.col >=13) && p.col>0) return false;
+    }
+  }
+  return true;
+}
+function checkWin(color,positions){
+  for (let p of positions)
+  {
+    if(p.color===color){
+      return false;
+    }
+  }
+  return true;
 }

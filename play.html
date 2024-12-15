@@ -28,8 +28,18 @@
             </a>
         </ul>
     </nav>
-   <div class="content" id="containerr">
-        
+   <div class="content">
+    <div id="playerForm" class="gameMenu">
+        <h2>Enter Player Names</h2>
+        <label for="player1">Player 1:</label>
+        <input type="text" id="player1" placeholder="Player 1 Name">
+        <br>
+        <label for="player2">Player 2:</label>
+        <input type="text" id="player2" placeholder="Player 2 Name">
+        <br>
+        <button id="startGame">Start Game</button>
+    </div>
+    <div class="game" id="game">
         <canvas id="board" width="1920" height="1080"></canvas>
         <div class="dice" id="dice">
           <div class="die" id="die1"></div>
@@ -37,6 +47,10 @@
     </div>
     <button class="btn" id="roll">Roll Dice</button>
    </div>
+    </div>
+    <div class="restart">
+
+    </div>
 </body>
 
 </html>
