@@ -5,18 +5,22 @@ var result2;
 var turn = 0;
 var invalid=0;
 var bar=[0,0];
-
+let winColor;
+let scor1=0;
+let scor2=0;
+const gameState = Object.freeze({
+  GAME: "GAME",
+  MENU: "MENU",
+  RESTART: "RESTART",
+});
+var playerNames=[];
+let gamePhase = gameState.MENU;
 window.onload = () => {
   const board = document.getElementById("board");
   const ctx = board.getContext("2d");
   const boardW = board.width;
   const boardH = board.height;
-  const gameState = Object.freeze({
-    GAME: "GAME",
-    MENU: "MENU",
-    RESTART: "RESTART",
-  });
-  let gamePhase = gameState.MENU;
+ 
   const barW = boardW / 15;
   const triangleW = boardW / 13;
   const triangleH = boardH / 2;
@@ -342,42 +346,52 @@ window.onload = () => {
       die2.classList.remove("roll");
     }, 500);
   }
-  function startGame() {
-    const playerForm = document.getElementById("playerForm");
+
+    
+  
+  if(gamePhase===gameState.MENU){
+
+      const playerForm = document.getElementById("playerForm");
     const container = document.getElementById("game");
     const startGameButton = document.getElementById("startGame");
 
     startGameButton.addEventListener("click", () => {
       const player1 = document.getElementById("player1").value.trim();
       const player2 = document.getElementById("player2").value.trim();
-
+      playerNames[0]=player1;
+      playerNames[1]=player2;
       if (player1 && player2) {
-        console.log("Player 1:", player1);
-        console.log("Player 2:", player2);
 
-        // Transition from the menu to the game phase
         playerForm.classList.add("fade-out");
 
         setTimeout(() => {
           playerForm.style.display = "none";
           container.classList.add("fade-in");
           container.style.display = "block";
-          gamePhase = gameState.GAME;
-          console.log("Game Phase Updated:", gamePhase);
+          
         }, 500);
+        document.getElementById("player1Info").innerText=`${player1}:  ${scor1}`;
+        document.getElementById("player2Info").innerText=`${player2}:  ${scor2}`;
+        document.getElementById("currentPlayer").innerText=`Current turn: ${playerNames[0]}`
+
       } else {
         alert("Please enter names for both players.");
       }
     });
-  }  
-  if(gamePhase===gameState.MENU) startGame()
-  else if (gamePhase === gameState.GAME) game()
+    gamePhase = gameState.GAME;
+    }
+   if (gamePhase === gameState.GAME){
+    console.log("game started"); 
+    game();
+   }
+  
+
   function game(){
     renderBoard();
     let color;
     let dices=[]
     let diceUsed=[false,false];
-    let diceChoice=0;
+    let diceChoice=-1;
     let diceRolled = false;
     document.getElementById("roll").addEventListener("click", () => {
       if(diceRolled) return;
@@ -434,7 +448,7 @@ window.onload = () => {
       if(checkValidMoves(color,parseInt(dices[diceChoice]),positions)){
       
       if(!movePiece(color,parseInt(dices[diceChoice]),col)){
-      if(checkWin(color,positions))gamePhase=gameState.RESTART;
+      
       renderBoard()
       diceUsed[diceChoice]=true;
       if(diceChoice===0) {
@@ -453,10 +467,58 @@ window.onload = () => {
         diceRolled = false;
         document.getElementById("die1").style.boxShadow=""
         document.getElementById("die2").style.boxShadow=""
+        color==='white' ? document.getElementById("currentPlayer").innerText=`Current player: ${playerNames[1]}` : document.getElementById("currentPlayer").innerText=`Current player: ${playerNames[0]}`; 
         diceChoice=-1;
         i=0;
         diceUsed=[false,false]
         dices=[];
+      }
+      if(checkWin(color,positions)) {
+          if (color==='white') ++scor1; 
+          else ++scor2;
+          
+          document.getElementById("restart").style.display= ""; 
+          document.getElementById("game").classList.add("fade-out");
+            document.getElementById("game").style.display= "none"; 
+            document.getElementById("restart").classList.add("fade-in");
+            document.getElementById("restart").style.visibility = "visible"; 
+          const playerName= color==='white' ? document.getElementById("player1").value : document.getElementById("player2").value;
+          document.getElementById("output").textContent=`Congratulations ${playerName}, you won!`
+          document.getElementById("restartGame").addEventListener("click", () =>{
+              positions = [
+                { nr: 5, color: "white", col: 19 },
+                { nr: 5, color: "white", col: 1 },
+                { nr: 2, color: "white", col: 12 },
+                { nr: 3, color: "white", col: 17 },
+                { nr: 5, color: "black", col: 7 },
+                { nr: 5, color: "black", col: 13 },
+                { nr: 2, color: "black", col: 24 },
+                { nr: 3, color: "black", col: 5 },
+          
+            ];
+            document.getElementById("game").classList.add("fade-in");
+            document.getElementById("game").style.display= "block"; 
+            document.getElementById("restart").classList.add("fade-out");
+            document.getElementById("restart").style.visibility = "hidden";
+            document.getElementById("restart").style.display = "none";
+            diceChoice=-1;
+            dices=[];
+            diceUsed=[false,false];
+            diceRolled = false;
+            document.getElementById("die1").style.boxShadow="";
+            document.getElementById("die2").style.boxShadow="";
+            turn=0;
+            renderBoard();
+            document.getElementById("player1Info").innerText=`${playerNames[0]}:  ${scor1}`;
+            document.getElementById("player2Info").innerText=`${playerNames[1]}:  ${scor2}`;    
+            document.getElementById("currentPlayer").innerText=`Current player: ${playerNames[0]}`;
+          });
+          document.getElementById("refresh").addEventListener("click",() =>{
+            location.reload();
+          });
+          
+          return 0;
+        
       }
     }
     
@@ -470,6 +532,7 @@ window.onload = () => {
         diceChoice=-1;
         dices=[];
         diceUsed=[false,false];
+        color==='white' ? document.getElementById("currentPlayer").innerText=`Current player: ${playerNames[1]}` : document.getElementById("currentPlayer").innerText=`Current player: ${playerNames[0]}`; 
         }
         else{
           if(diceChoice===0) {
@@ -487,7 +550,7 @@ window.onload = () => {
     }
     });
     }
-  
+    
 };
 
 function drawTriangle(ctx, x, y, isUp, color, triangleH, triangleW) {

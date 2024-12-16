@@ -10,6 +10,7 @@
 .game{
   display: none;
 }
+
   .dice {
       display: flex;
       justify-content: center;
@@ -64,31 +65,48 @@
     }
 
     @keyframes fadeOut {
-  from {
-      opacity: 1;
-  }
-  to {
-      opacity: 0;
-      visibility: hidden;
-  }
-}
+      from {
+          opacity: 1;
+      }
+      to {
+          opacity: 0;
+          visibility: hidden;
+      }
+    }
+    
+    .gameMenu.fade-out {
+      animation: fadeOut 0.5s forwards;
+    }
+    
+    @keyframes fadeIn {
+      from {
+          opacity: 0;
+          visibility: hidden;
+      }
+      to {
+          opacity: 1;
+          visibility: visible;
+      }
+    }
+    
+    .content.fade-in {
+      animation: fadeIn 0.5s forwards;
+      display: block; 
+    }
+    
+    #restart {
+      visibility: hidden; 
+    }
+    #restart.fade-in {
+      animation: fadeIn 0.5s forwards;
+      display: block; 
+    }
 
-.gameMenu.fade-out {
-  animation: fadeOut 0.5s forwards;
-}
+ .playerInfo{
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: row;
+  flex-wrap: wrap;
+ }
 
-@keyframes fadeIn {
-  from {
-      opacity: 0;
-      display: none;
-  }
-  to {
-      opacity: 1;
-      display: block;
-  }
-}
-
-.content.fade-in {
-  animation: fadeIn 0.5s forwards;
-  display: block;
-}
+  

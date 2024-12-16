@@ -41,15 +41,23 @@
     </div>
     <div class="game" id="game">
         <canvas id="board" width="1920" height="1080"></canvas>
+        <div class="playerInfo">
+            <p id="player1Info">Player 1: <span id="player1Score">0</span></p>
+            <p id="currentPlayer">Current Turn: Player 1</p>
+            <p id="player2Info">Player 2: <span id="player2Score">0</span></p>
+        </div>
         <div class="dice" id="dice">
           <div class="die" id="die1"></div>
             <div class="die" id="die2"></div>
     </div>
     <button class="btn" id="roll">Roll Dice</button>
    </div>
+    <div id="restart">
+        <h2 id="output"></h2>
+        <h3>Want to play again?</h3>
+        <button id="restartGame">Yes</button>
+        <button id="refresh">No</button>
     </div>
-    <div class="restart">
-
     </div>
 </body>
 
