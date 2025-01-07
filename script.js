@@ -6,8 +6,17 @@ var turn = 0;
 var invalid=0;
 var bar=[0,0];
 let winColor;
-let scor1=0;
-let scor2=0;
+let scor1 = 0; 
+let scor2 = 0;
+let positions;
+  fetch('positions.json')
+    .then(response => response.json())
+    .then(data => {
+      positions = data;
+      localStorage.setItem('positions', JSON.stringify(positions));
+    })
+    .catch(error => console.error('Error:', error));
+positions = JSON.parse(localStorage.getItem('positions'));
 const gameState = Object.freeze({
   GAME: "GAME",
   MENU: "MENU",
@@ -25,18 +34,8 @@ window.onload = () => {
   const triangleW = boardW / 13;
   const triangleH = boardH / 2;
   const triangleColors = ["#d2691e", "#ffffff"];
-  var positions = [
-    { nr: 5, color: "white", col: 19 },
-    { nr: 5, color: "white", col: 1 },
-    { nr: 2, color: "white", col: 12 },
-    { nr: 3, color: "white", col: 17 },
-    { nr: 5, color: "black", col: 7 },
-    { nr: 5, color: "black", col: 13 },
-    { nr: 2, color: "black", col: 24 },
-    { nr: 3, color: "black", col: 5 },
 
-  ];
-  
+
   function renderBoard() {
     ctx.clearRect(0, 0, boardW, boardH);
     ctx.fillStyle = "#f0d9b5";
@@ -345,23 +344,39 @@ window.onload = () => {
       die1.classList.remove("roll");
       die2.classList.remove("roll");
     }, 500);
-  }
-
-    
-  
+  }    
   if(gamePhase===gameState.MENU){
-
-      const playerForm = document.getElementById("playerForm");
+    const regex = /^[a-zA-Z0-9_]{3,20}$/;
+    const playerForm = document.getElementById("playerForm");
     const container = document.getElementById("game");
     const startGameButton = document.getElementById("startGame");
-
+    
+    startGameButton.addEventListener("mouseover",()=>{
+      const player1 = document.getElementById("player1").value.trim();
+      const player2 = document.getElementById("player2").value.trim();
+      const style=window.getComputedStyle(startGameButton)
+      if (!regex.test(player1) || !regex.test(player2) || player1==player2){ 
+          if(style.cursor==="pointer"){
+            startGameButton.style.cursor="default"
+            startGameButton.style.color="red"
+            startGameButton.style.border="2px solid red"
+          }
+        }
+      if (regex.test(player1) && regex.test(player2) && player1!=player2 && style.cursor==="default") {
+            startGameButton.style.cursor="pointer"
+            startGameButton.style.color="lime"
+            startGameButton.style.border="2px solid lime"
+      }
+    })
     startGameButton.addEventListener("click", () => {
       const player1 = document.getElementById("player1").value.trim();
       const player2 = document.getElementById("player2").value.trim();
       playerNames[0]=player1;
       playerNames[1]=player2;
-      if (player1 && player2) {
 
+      sessionStorage.setItem(player1,scor1);
+      sessionStorage.setItem(player2,scor2);
+      if (regex.test(player1) && regex.test(player2) && player1!=player2) {
         playerForm.classList.add("fade-out");
 
         setTimeout(() => {
@@ -370,18 +385,17 @@ window.onload = () => {
           container.style.display = "block";
           
         }, 500);
-        document.getElementById("player1Info").innerText=`${player1}:  ${scor1}`;
-        document.getElementById("player2Info").innerText=`${player2}:  ${scor2}`;
+        document.getElementById("player1Info").innerText=`${player1}:  ${sessionStorage.getItem(player1)}`;
+        document.getElementById("player2Info").innerText=`${player2}:  ${sessionStorage.getItem(player2)}`;
         document.getElementById("currentPlayer").innerText=`Current turn: ${playerNames[0]}`
 
       } else {
-        alert("Please enter names for both players.");
+        alert("Please enter valid names for both players (at least 3 alpha-numeric characters)");
       }
     });
     gamePhase = gameState.GAME;
     }
    if (gamePhase === gameState.GAME){
-    console.log("game started"); 
     game();
    }
   
@@ -477,6 +491,8 @@ window.onload = () => {
           if (color==='white') ++scor1; 
           else ++scor2;
           
+          sessionStorage.setItem(playerNames[0],scor1)
+          sessionStorage.setItem(playerNames[1],scor2)
           document.getElementById("restart").style.display= ""; 
           document.getElementById("game").classList.add("fade-out");
             document.getElementById("game").style.display= "none"; 
@@ -485,17 +501,8 @@ window.onload = () => {
           const playerName= color==='white' ? document.getElementById("player1").value : document.getElementById("player2").value;
           document.getElementById("output").textContent=`Congratulations ${playerName}, you won!`
           document.getElementById("restartGame").addEventListener("click", () =>{
-              positions = [
-                { nr: 5, color: "white", col: 19 },
-                { nr: 5, color: "white", col: 1 },
-                { nr: 2, color: "white", col: 12 },
-                { nr: 3, color: "white", col: 17 },
-                { nr: 5, color: "black", col: 7 },
-                { nr: 5, color: "black", col: 13 },
-                { nr: 2, color: "black", col: 24 },
-                { nr: 3, color: "black", col: 5 },
-          
-            ];
+            positions = JSON.parse(localStorage.getItem('positions'));
+        
             document.getElementById("game").classList.add("fade-in");
             document.getElementById("game").style.display= "block"; 
             document.getElementById("restart").classList.add("fade-out");
@@ -509,8 +516,8 @@ window.onload = () => {
             document.getElementById("die2").style.boxShadow="";
             turn=0;
             renderBoard();
-            document.getElementById("player1Info").innerText=`${playerNames[0]}:  ${scor1}`;
-            document.getElementById("player2Info").innerText=`${playerNames[1]}:  ${scor2}`;    
+              document.getElementById("player1Info").innerText = `${playerNames[0]}: ${sessionStorage.getItem(playerNames[0])}`;
+              document.getElementById("player2Info").innerText = `${playerNames[1]}: ${sessionStorage.getItem(playerNames[1])}`;
             document.getElementById("currentPlayer").innerText=`Current player: ${playerNames[0]}`;
           });
           document.getElementById("refresh").addEventListener("click",() =>{

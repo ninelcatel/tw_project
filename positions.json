@@ -1,0 +1,10 @@
+[
+  { "nr": 5, "color": "white", "col": 19 },
+  { "nr": 5, "color": "white", "col": 1 },
+  { "nr": 2, "color": "white", "col": 12 },
+  { "nr": 3, "color": "white", "col": 17 },
+  { "nr": 5, "color": "black", "col": 7 },
+  { "nr": 5, "color": "black", "col": 13 },
+  { "nr": 2, "color": "black", "col": 24 },
+  { "nr": 3, "color": "black", "col": 5 }
+]
