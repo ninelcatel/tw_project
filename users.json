@@ -1,0 +1,16 @@
+{
+    "users": {
+        "admin": {
+            "password": "123",
+            "score": {
+                "admin2": 15
+            }
+        },
+        "admin2": {
+            "password": "123",
+            "score": {
+                "admin": 6
+            }
+        }
+    }
+}
